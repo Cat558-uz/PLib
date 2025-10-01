@@ -41,6 +41,7 @@ function MiniLib:CreateWindow(titleText)
         Scrolling.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
     end)
 
+    -- FUNÇÃO BOTÃO
     function MiniLib:CreateButton(nameText, descText, callback)
         local Button = Instance.new("TextButton")
         Button.Size = UDim2.new(1, -10, 0, 50)
@@ -49,20 +50,20 @@ function MiniLib:CreateWindow(titleText)
         Button.AutoButtonColor = true
         Button.Parent = Scrolling
 
-        local Title = Instance.new("TextLabel")
-        Title.Parent = Button
-        Title.Size = UDim2.new(1, -10, 0, 18)
-        Title.Position = UDim2.new(0, 5, 0, 5)
-        Title.BackgroundTransparency = 1
-        Title.Text = nameText or "Button"
-        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Title.TextXAlignment = Enum.TextXAlignment.Left
-        Title.Font = Enum.Font.GothamBold
-        Title.TextSize = 14
+        local TitleLabel = Instance.new("TextLabel")
+        TitleLabel.Parent = Button
+        TitleLabel.Size = UDim2.new(1, -10, 0, 18)
+        TitleLabel.Position = UDim2.new(0, 5, 0, 5)
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.Text = nameText or "Button"
+        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.TextSize = 14
 
         local Desc = Instance.new("TextLabel")
         Desc.Parent = Button
-        Desc.Size = UDim2.new(1, -10, 0, 0) -- altura ajustada dinamicamente
+        Desc.Size = UDim2.new(1, -10, 0, 0)
         Desc.Position = UDim2.new(0, 5, 0, 25)
         Desc.BackgroundTransparency = 1
         Desc.Text = descText or ""
@@ -73,7 +74,6 @@ function MiniLib:CreateWindow(titleText)
         Desc.TextSize = 12
         Desc.TextWrapped = true
 
-        -- Ajusta tamanho da descrição e do botão automaticamente
         local function updateSize()
             local neededHeight = Desc.TextBounds.Y
             Desc.Size = UDim2.new(1, -10, 0, neededHeight)
@@ -85,6 +85,131 @@ function MiniLib:CreateWindow(titleText)
         Button.MouseButton1Click:Connect(function()
             if callback then callback() end
         end)
+    end
+
+    -- FUNÇÃO TOGGLE
+    function MiniLib:CreateToggle(nameText, descText, default, callback)
+        local ToggleFrame = Instance.new("Frame")
+        ToggleFrame.Size = UDim2.new(1, -10, 0, 50)
+        ToggleFrame.BackgroundTransparency = 1
+        ToggleFrame.Parent = Scrolling
+
+        local TitleLabel = Instance.new("TextLabel")
+        TitleLabel.Parent = ToggleFrame
+        TitleLabel.Size = UDim2.new(1, -10, 0, 18)
+        TitleLabel.Position = UDim2.new(0, 5, 0, 5)
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.Text = nameText or "Toggle"
+        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.TextSize = 14
+
+        local Desc = Instance.new("TextLabel")
+        Desc.Parent = ToggleFrame
+        Desc.Size = UDim2.new(1, -10, 0, 0)
+        Desc.Position = UDim2.new(0, 5, 0, 25)
+        Desc.BackgroundTransparency = 1
+        Desc.Text = descText or ""
+        Desc.TextColor3 = Color3.fromRGB(200, 200, 200)
+        Desc.TextXAlignment = Enum.TextXAlignment.Left
+        Desc.TextYAlignment = Enum.TextYAlignment.Top
+        Desc.Font = Enum.Font.Gotham
+        Desc.TextSize = 12
+        Desc.TextWrapped = true
+
+        local ToggleButton = Instance.new("TextButton")
+        ToggleButton.Size = UDim2.new(0, 20, 0, 20)
+        ToggleButton.Position = UDim2.new(1, -25, 0, 5)
+        ToggleButton.BackgroundColor3 = default and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(150, 0, 0)
+        ToggleButton.Text = ""
+        ToggleButton.Parent = ToggleFrame
+
+        local state = default or false
+
+        local function updateToggle()
+            ToggleButton.BackgroundColor3 = state and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(150, 0, 0)
+            if callback then callback(state) end
+        end
+
+        ToggleButton.MouseButton1Click:Connect(function()
+            state = not state
+            updateToggle()
+        end)
+
+        local function updateSize()
+            local neededHeight = Desc.TextBounds.Y
+            Desc.Size = UDim2.new(1, -10, 0, neededHeight)
+            ToggleFrame.Size = UDim2.new(1, -10, 0, 30 + neededHeight + 5)
+        end
+        Desc:GetPropertyChangedSignal("TextBounds"):Connect(updateSize)
+        updateSize()
+    end
+
+    -- FUNÇÃO TEXTBOX
+    function MiniLib:CreateTextbox(nameText, placeholder, descText, callback)
+        local BoxFrame = Instance.new("Frame")
+        BoxFrame.Size = UDim2.new(1, -10, 0, 50)
+        BoxFrame.BackgroundTransparency = 1
+        BoxFrame.Parent = Scrolling
+
+        local TitleLabel = Instance.new("TextLabel")
+        TitleLabel.Parent = BoxFrame
+        TitleLabel.Size = UDim2.new(1, -10, 0, 18)
+        TitleLabel.Position = UDim2.new(0, 5, 0, 5)
+        TitleLabel.BackgroundTransparency = 1
+        TitleLabel.Text = nameText or "Textbox"
+        TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLabel.Font = Enum.Font.GothamBold
+        TitleLabel.TextSize = 14
+
+        local Desc = Instance.new("TextLabel")
+        Desc.Parent = BoxFrame
+        Desc.Size = UDim2.new(1, -10, 0, 0)
+        Desc.Position = UDim2.new(0, 5, 0, 25)
+        Desc.BackgroundTransparency = 1
+        Desc.Text = descText or ""
+        Desc.TextColor3 = Color3.fromRGB(200, 200, 200)
+        Desc.TextXAlignment = Enum.TextXAlignment.Left
+        Desc.TextYAlignment = Enum.TextYAlignment.Top
+        Desc.Font = Enum.Font.Gotham
+        Desc.TextSize = 12
+        Desc.TextWrapped = true
+
+        local TextBox = Instance.new("TextBox")
+        TextBox.Size = UDim2.new(1, -10, 0, 20)
+        TextBox.Position = UDim2.new(0, 5, 0, 25)
+        TextBox.PlaceholderText = placeholder or ""
+        TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextBox.Font = Enum.Font.Gotham
+        TextBox.TextSize = 14
+        TextBox.Parent = BoxFrame
+
+        TextBox.FocusLost:Connect(function(enterPressed)
+            if enterPressed and callback then
+                callback(TextBox.Text)
+            end
+        end)
+
+        local function updateSize()
+            local neededHeight = Desc.TextBounds.Y
+            Desc.Position = UDim2.new(0, 5, 0, 25)
+            TextBox.Position = UDim2.new(0, 5, 0, 25 + neededHeight + 2)
+            BoxFrame.Size = UDim2.new(1, -10, 0, 50 + neededHeight)
+        end
+        Desc:GetPropertyChangedSignal("TextBounds"):Connect(updateSize)
+        updateSize()
+    end
+
+    -- MÉTODOS ADICIONAIS
+    function MiniLib:SetTitle(newTitle)
+        Title.Text = newTitle or Title.Text
+    end
+
+    function MiniLib:SetSize(width, height)
+        Frame.Size = UDim2.new(0, width or Frame.Size.X.Offset, 0, height or Frame.Size.Y.Offset)
     end
 
     return MiniLib
