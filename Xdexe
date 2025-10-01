@@ -41,8 +41,12 @@ function MiniLib:CreateWindow(titleText)
         Scrolling.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
     end)
 
-    -- FUNÇÃO BOTÃO
-    function MiniLib:CreateButton(nameText, descText, callback)
+    -- AddButton
+    function self:AddButton(options)
+        local nameText = options.Name or "Button"
+        local descText = options.Description or ""
+        local callback = options.Callback
+
         local Button = Instance.new("TextButton")
         Button.Size = UDim2.new(1, -10, 0, 50)
         Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -55,7 +59,7 @@ function MiniLib:CreateWindow(titleText)
         TitleLabel.Size = UDim2.new(1, -10, 0, 18)
         TitleLabel.Position = UDim2.new(0, 5, 0, 5)
         TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = nameText or "Button"
+        TitleLabel.Text = nameText
         TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
         TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
         TitleLabel.Font = Enum.Font.GothamBold
@@ -66,7 +70,7 @@ function MiniLib:CreateWindow(titleText)
         Desc.Size = UDim2.new(1, -10, 0, 0)
         Desc.Position = UDim2.new(0, 5, 0, 25)
         Desc.BackgroundTransparency = 1
-        Desc.Text = descText or ""
+        Desc.Text = descText
         Desc.TextColor3 = Color3.fromRGB(200, 200, 200)
         Desc.TextXAlignment = Enum.TextXAlignment.Left
         Desc.TextYAlignment = Enum.TextYAlignment.Top
@@ -87,8 +91,13 @@ function MiniLib:CreateWindow(titleText)
         end)
     end
 
-    -- FUNÇÃO TOGGLE
-    function MiniLib:CreateToggle(nameText, descText, default, callback)
+    -- AddToggle
+    function self:AddToggle(options)
+        local nameText = options.Name or "Toggle"
+        local descText = options.Description or ""
+        local default = options.Default or false
+        local callback = options.Callback
+
         local ToggleFrame = Instance.new("Frame")
         ToggleFrame.Size = UDim2.new(1, -10, 0, 50)
         ToggleFrame.BackgroundTransparency = 1
@@ -99,7 +108,7 @@ function MiniLib:CreateWindow(titleText)
         TitleLabel.Size = UDim2.new(1, -10, 0, 18)
         TitleLabel.Position = UDim2.new(0, 5, 0, 5)
         TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = nameText or "Toggle"
+        TitleLabel.Text = nameText
         TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
         TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
         TitleLabel.Font = Enum.Font.GothamBold
@@ -110,7 +119,7 @@ function MiniLib:CreateWindow(titleText)
         Desc.Size = UDim2.new(1, -10, 0, 0)
         Desc.Position = UDim2.new(0, 5, 0, 25)
         Desc.BackgroundTransparency = 1
-        Desc.Text = descText or ""
+        Desc.Text = descText
         Desc.TextColor3 = Color3.fromRGB(200, 200, 200)
         Desc.TextXAlignment = Enum.TextXAlignment.Left
         Desc.TextYAlignment = Enum.TextYAlignment.Top
@@ -125,7 +134,7 @@ function MiniLib:CreateWindow(titleText)
         ToggleButton.Text = ""
         ToggleButton.Parent = ToggleFrame
 
-        local state = default or false
+        local state = default
 
         local function updateToggle()
             ToggleButton.BackgroundColor3 = state and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(150, 0, 0)
@@ -146,8 +155,13 @@ function MiniLib:CreateWindow(titleText)
         updateSize()
     end
 
-    -- FUNÇÃO TEXTBOX
-    function MiniLib:CreateTextbox(nameText, placeholder, descText, callback)
+    -- AddTextbox
+    function self:AddTextbox(options)
+        local nameText = options.Name or "Textbox"
+        local placeholder = options.Placeholder or ""
+        local descText = options.Description or ""
+        local callback = options.Callback
+
         local BoxFrame = Instance.new("Frame")
         BoxFrame.Size = UDim2.new(1, -10, 0, 50)
         BoxFrame.BackgroundTransparency = 1
@@ -158,7 +172,7 @@ function MiniLib:CreateWindow(titleText)
         TitleLabel.Size = UDim2.new(1, -10, 0, 18)
         TitleLabel.Position = UDim2.new(0, 5, 0, 5)
         TitleLabel.BackgroundTransparency = 1
-        TitleLabel.Text = nameText or "Textbox"
+        TitleLabel.Text = nameText
         TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
         TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
         TitleLabel.Font = Enum.Font.GothamBold
@@ -169,7 +183,7 @@ function MiniLib:CreateWindow(titleText)
         Desc.Size = UDim2.new(1, -10, 0, 0)
         Desc.Position = UDim2.new(0, 5, 0, 25)
         Desc.BackgroundTransparency = 1
-        Desc.Text = descText or ""
+        Desc.Text = descText
         Desc.TextColor3 = Color3.fromRGB(200, 200, 200)
         Desc.TextXAlignment = Enum.TextXAlignment.Left
         Desc.TextYAlignment = Enum.TextYAlignment.Top
@@ -180,7 +194,7 @@ function MiniLib:CreateWindow(titleText)
         local TextBox = Instance.new("TextBox")
         TextBox.Size = UDim2.new(1, -10, 0, 20)
         TextBox.Position = UDim2.new(0, 5, 0, 25)
-        TextBox.PlaceholderText = placeholder or ""
+        TextBox.PlaceholderText = placeholder
         TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
         TextBox.Font = Enum.Font.Gotham
@@ -203,16 +217,16 @@ function MiniLib:CreateWindow(titleText)
         updateSize()
     end
 
-    -- MÉTODOS ADICIONAIS
-    function MiniLib:SetTitle(newTitle)
+    -- Métodos adicionais
+    function self:SetTitle(newTitle)
         Title.Text = newTitle or Title.Text
     end
 
-    function MiniLib:SetSize(width, height)
+    function self:SetSize(width, height)
         Frame.Size = UDim2.new(0, width or Frame.Size.X.Offset, 0, height or Frame.Size.Y.Offset)
     end
 
-    return MiniLib
+    return self
 end
 
 return MiniLib
