@@ -1,6 +1,5 @@
 --// Serviços
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 
 --// GUI Base
@@ -58,35 +57,61 @@ function Library:AddSection(name)
     Sec.LayoutOrder = 1
 end
 
+--// Função util para criar descrição
+local function AddDescription(parent, text)
+    if not text then return end
+    local Desc = Instance.new("TextLabel", parent)
+    Desc.Size = UDim2.new(1, 0, 0, 15)
+    Desc.BackgroundTransparency = 1
+    Desc.Text = text
+    Desc.TextColor3 = Color3.fromRGB(180, 180, 180)
+    Desc.Font = Enum.Font.Gotham
+    Desc.TextSize = 12
+    Desc.TextXAlignment = Enum.TextXAlignment.Left
+    return Desc
+end
+
 --// Botão
-function Library:AddButton(name, callback)
-    local Btn = Instance.new("TextButton", MainFrame)
-    Btn.Size = UDim2.new(0.9, 0, 0, 35)
+function Library:AddButton(data)
+    local BtnFrame = Instance.new("Frame", MainFrame)
+    BtnFrame.Size = UDim2.new(0.9, 0, 0, data.Description and 55 or 35)
+    BtnFrame.BackgroundTransparency = 1
+    BtnFrame.LayoutOrder = 1
+
+    local Btn = Instance.new("TextButton", BtnFrame)
+    Btn.Size = UDim2.new(1, 0, 0, 35)
     Btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     Btn.Font = Enum.Font.Gotham
     Btn.TextSize = 16
-    Btn.Text = name
-    Btn.LayoutOrder = 1
+    Btn.Text = data.Name or "Button"
 
     local corner = Instance.new("UICorner", Btn)
     corner.CornerRadius = UDim.new(0, 8)
 
     Btn.MouseButton1Click:Connect(function()
-        pcall(callback)
+        if data.Callback then
+            pcall(data.Callback)
+        end
     end)
+
+    AddDescription(BtnFrame, data.Description)
 end
 
 --// Toggle
-function Library:AddToggle(name, callback)
-    local Toggle = Instance.new("TextButton", MainFrame)
-    Toggle.Size = UDim2.new(0.9, 0, 0, 35)
+function Library:AddToggle(data)
+    local Frame = Instance.new("Frame", MainFrame)
+    Frame.Size = UDim2.new(0.9, 0, 0, data.Description and 55 or 35)
+    Frame.BackgroundTransparency = 1
+    Frame.LayoutOrder = 1
+
+    local Toggle = Instance.new("TextButton", Frame)
+    Toggle.Size = UDim2.new(1, 0, 0, 35)
     Toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
     Toggle.Font = Enum.Font.Gotham
     Toggle.TextSize = 16
-    Toggle.Text = name.." (OFF)"
-    Toggle.LayoutOrder = 1
+    Toggle.Text = (data.Name or "Toggle").." (OFF)"
 
     local corner = Instance.new("UICorner", Toggle)
     corner.CornerRadius = UDim.new(0, 8)
@@ -95,32 +120,36 @@ function Library:AddToggle(name, callback)
     Toggle.MouseButton1Click:Connect(function()
         state = not state
         Toggle.BackgroundColor3 = state and Color3.fromRGB(100, 180, 100) or Color3.fromRGB(60, 60, 60)
-        Toggle.Text = name.." ("..(state and "ON" or "OFF")..")"
-        pcall(callback, state, Toggle)
+        Toggle.Text = (data.Name or "Toggle").." ("..(state and "ON" or "OFF")..")"
+        if data.Callback then
+            pcall(data.Callback, state, Toggle)
+        end
     end)
+
+    AddDescription(Frame, data.Description)
 end
 
---// TextBox simples
-function Library:AddTextbox(text, placeholder, callback)
+--// TextBox
+function Library:AddTextbox(data)
     local Frame = Instance.new("Frame", MainFrame)
-    Frame.Size = UDim2.new(0.9, 0, 0, 40)
+    Frame.Size = UDim2.new(0.9, 0, 0, data.Description and 60 or 40)
     Frame.BackgroundTransparency = 1
     Frame.LayoutOrder = 1
 
     local Label = Instance.new("TextLabel", Frame)
-    Label.Size = UDim2.new(0.4, 0, 1, 0)
+    Label.Size = UDim2.new(0.4, 0, 0, 30)
     Label.BackgroundTransparency = 1
-    Label.Text = text
+    Label.Text = data.Name or "Textbox"
     Label.TextColor3 = Color3.fromRGB(255, 255, 255)
     Label.Font = Enum.Font.Gotham
     Label.TextSize = 14
 
     local Box = Instance.new("TextBox", Frame)
-    Box.Size = UDim2.new(0.6, -5, 1, 0)
+    Box.Size = UDim2.new(0.6, -5, 0, 30)
     Box.Position = UDim2.new(0.4, 5, 0, 0)
     Box.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     Box.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Box.PlaceholderText = placeholder
+    Box.PlaceholderText = data.Placeholder or "Digite..."
     Box.Font = Enum.Font.Gotham
     Box.TextSize = 14
 
@@ -128,44 +157,12 @@ function Library:AddTextbox(text, placeholder, callback)
     corner.CornerRadius = UDim.new(0, 6)
 
     Box.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            pcall(callback, Box.Text)
+        if enterPressed and data.Callback then
+            pcall(data.Callback, Box.Text)
         end
     end)
-end
 
---// TextBox com size custom
-function Library:AddTextboxSize(text, placeholder, size, callback)
-    local Frame = Instance.new("Frame", MainFrame)
-    Frame.Size = size
-    Frame.BackgroundTransparency = 1
-    Frame.LayoutOrder = 1
-
-    local Label = Instance.new("TextLabel", Frame)
-    Label.Size = UDim2.new(0.4, 0, 1, 0)
-    Label.BackgroundTransparency = 1
-    Label.Text = text
-    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Label.Font = Enum.Font.Gotham
-    Label.TextSize = 14
-
-    local Box = Instance.new("TextBox", Frame)
-    Box.Size = UDim2.new(0.6, -5, 1, 0)
-    Box.Position = UDim2.new(0.4, 5, 0, 0)
-    Box.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    Box.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Box.PlaceholderText = placeholder
-    Box.Font = Enum.Font.Gotham
-    Box.TextSize = 14
-
-    local corner = Instance.new("UICorner", Box)
-    corner.CornerRadius = UDim.new(0, 6)
-
-    Box.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            pcall(callback, Box.Text)
-        end
-    end)
+    AddDescription(Frame, data.Description)
 end
 
 --// Retornar
